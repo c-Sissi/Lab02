@@ -9,6 +9,8 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IllegalFormatException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -23,7 +25,7 @@ import javafx.scene.control.TextField;
 
 public class FXMLController {
 	
-	private Map<String,String> dizionario = new HashMap<String,String>();
+	private Map<String, LinkedList<String>> dizionario = new HashMap<String,LinkedList<String>>();
 	
 
     @FXML // ResourceBundle that was given to the FXMLLoader
@@ -56,18 +58,25 @@ public class FXMLController {
     @FXML
     void doTranslate(ActionEvent event) {
     	String parola = txtParola.getText().toLowerCase();
-    	
+    	String traduzioni = "Le possibili traduzioni della parola cercata sono:\n";
     	if(isValid(parola)) {
     		if(!parola.contains(" ") && dizionario.get(parola)!= null) {
-    			txtDictionary.setText(dizionario.get(parola));
+    			for(String s: dizionario.get(parola)) {
+    				if(dizionario.get(parola).contains(s)) {
+    					traduzioni += s +"\n";
+    				}
+    			}
+    				txtDictionary.setText(traduzioni);
+    		
     		}
     		else if(parola.contains(" ")) {
 	    		String arrParola[] = parola.split(" ");
 	    		if(dizionario.get(arrParola[0])!= null) {
-	    			txtDictionary.setText("La parola è già presente nel dizionario");
+	    			dizionario.get(arrParola[0]).add(arrParola[1]);
 	    		}
 	    		else {
-	    			dizionario.put(arrParola[0], arrParola[1]);
+	    			dizionario.put(arrParola[0], new LinkedList<String>());
+	    			dizionario.get(arrParola[0]).add(arrParola[1]);
 	    			txtDictionary.setText("Parola aggiunta al dizionario!");
 	    		}
     		}
